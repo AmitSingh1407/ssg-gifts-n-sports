@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { 
-  Basketball, 
+  GiftBox, 
   ShoppingBag, 
-  CricketBatBall, 
+  Bat, 
   Football, 
   Drone, 
-  Toys, 
+  Gamepad2, 
   Bottle
 } from "lucide-react";
 
@@ -14,14 +14,14 @@ const categories = [
   {
     id: 1,
     name: 'Sports Goods',
-    icon: <Basketball className="w-10 h-10" />,
+    icon: <Football className="w-10 h-10" />,
     color: 'bg-shop-soft-yellow',
     description: 'Quality sports equipment for professionals and enthusiasts'
   },
   {
     id: 2,
     name: 'Cricket Gear',
-    icon: <CricketBatBall className="w-10 h-10" />,
+    icon: <Bat className="w-10 h-10" />,
     color: 'bg-shop-soft-green',
     description: 'Professional cricket bats, balls and accessories'
   },
@@ -35,14 +35,14 @@ const categories = [
   {
     id: 4,
     name: 'Toys',
-    icon: <Toys className="w-10 h-10" />,
+    icon: <Gamepad2 className="w-10 h-10" />,
     color: 'bg-shop-soft-orange',
     description: 'Fun and educational toys for all ages'
   },
   {
     id: 5,
     name: 'Gift Items',
-    icon: <ShoppingBag className="w-10 h-10" />,
+    icon: <GiftBox className="w-10 h-10" />,
     color: 'bg-shop-light-purple',
     description: 'Perfect gifts for every occasion'
   },
