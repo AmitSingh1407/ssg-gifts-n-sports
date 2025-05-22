@@ -3,7 +3,7 @@ import React from 'react';
 import { 
   Gift, 
   ShoppingBag, 
-  Cricket, 
+  Bat, 
   FlagTriangleRight, 
   Gamepad2,
   Beer 
@@ -20,7 +20,7 @@ const categories = [
   {
     id: 2,
     name: 'Cricket Gear',
-    icon: <Cricket className="w-10 h-10" />,
+    icon: <Bat className="w-10 h-10" />,
     color: 'bg-shop-soft-green',
     description: 'Professional cricket bats, balls and accessories'
   },
