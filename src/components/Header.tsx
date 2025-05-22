@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingCart, Menu, X, Truck } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
@@ -23,6 +23,11 @@ const Header = () => {
     scrollToSection('products');
   };
 
+  const goToDelivery = () => {
+    setIsMenuOpen(false);
+    navigate('/delivery');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -31,6 +36,7 @@ const Header = () => {
           className="flex items-center gap-2"
           onClick={(e) => {
             e.preventDefault();
+            navigate('/');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         >
@@ -45,6 +51,7 @@ const Header = () => {
             className="text-foreground hover:text-shop-purple transition-colors"
             onClick={(e) => {
               e.preventDefault();
+              navigate('/');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           >
@@ -55,6 +62,7 @@ const Header = () => {
             className="text-foreground hover:text-shop-purple transition-colors"
             onClick={(e) => {
               e.preventDefault();
+              navigate('/');
               scrollToSection('categories');
             }}
           >
@@ -65,6 +73,7 @@ const Header = () => {
             className="text-foreground hover:text-shop-purple transition-colors"
             onClick={(e) => {
               e.preventDefault();
+              navigate('/');
               scrollToSection('products');
             }}
           >
@@ -75,6 +84,7 @@ const Header = () => {
             className="text-foreground hover:text-shop-purple transition-colors"
             onClick={(e) => {
               e.preventDefault();
+              navigate('/');
               scrollToSection('about');
             }}
           >
@@ -85,10 +95,21 @@ const Header = () => {
             className="text-foreground hover:text-shop-purple transition-colors"
             onClick={(e) => {
               e.preventDefault();
+              navigate('/');
               scrollToSection('contact');
             }}
           >
             Contact
+          </a>
+          <a 
+            href="/delivery" 
+            className="text-foreground hover:text-shop-purple transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              goToDelivery();
+            }}
+          >
+            Delivery
           </a>
         </nav>
 
@@ -97,9 +118,9 @@ const Header = () => {
             variant="ghost" 
             size="icon" 
             className="text-foreground hover:text-shop-purple"
-            onClick={() => console.log('Shopping cart clicked')}
+            onClick={() => goToDelivery()}
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingCart className="h-5 w-5" />
           </Button>
           <Button 
             className="hidden md:flex bg-shop-purple hover:bg-shop-dark-purple"
@@ -129,6 +150,7 @@ const Header = () => {
               className="py-2 text-foreground hover:text-shop-purple transition-colors"
               onClick={(e) => {
                 e.preventDefault();
+                navigate('/');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 setIsMenuOpen(false);
               }}
@@ -140,6 +162,7 @@ const Header = () => {
               className="py-2 text-foreground hover:text-shop-purple transition-colors"
               onClick={(e) => {
                 e.preventDefault();
+                navigate('/');
                 scrollToSection('categories');
               }}
             >
@@ -150,6 +173,7 @@ const Header = () => {
               className="py-2 text-foreground hover:text-shop-purple transition-colors"
               onClick={(e) => {
                 e.preventDefault();
+                navigate('/');
                 scrollToSection('products');
               }}
             >
@@ -160,6 +184,7 @@ const Header = () => {
               className="py-2 text-foreground hover:text-shop-purple transition-colors"
               onClick={(e) => {
                 e.preventDefault();
+                navigate('/');
                 scrollToSection('about');
               }}
             >
@@ -170,10 +195,22 @@ const Header = () => {
               className="py-2 text-foreground hover:text-shop-purple transition-colors"
               onClick={(e) => {
                 e.preventDefault();
+                navigate('/');
                 scrollToSection('contact');
               }}
             >
               Contact
+            </a>
+            <a 
+              href="/delivery" 
+              className="py-2 text-foreground hover:text-shop-purple transition-colors flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                goToDelivery();
+              }}
+            >
+              <Truck className="h-4 w-4" />
+              Delivery
             </a>
             <Button 
               className="w-full bg-shop-purple hover:bg-shop-dark-purple mt-2"

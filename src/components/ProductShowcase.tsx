@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { ShoppingCart } from "lucide-react";
 
 const products = [
   {
@@ -45,6 +46,17 @@ const ProductShowcase = () => {
     }
   };
 
+  const handleAddToCart = (productId: number) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      // In a real app, this would add to cart state/storage
+      toast({
+        title: "Added to Cart",
+        description: `${product.name} has been added to your cart`,
+      });
+    }
+  };
+
   const handleViewAllProducts = () => {
     toast({
       title: "View All Products",
@@ -78,14 +90,25 @@ const ProductShowcase = () => {
               </div>
               <div className="p-4">
                 <h3 className="font-medium text-lg mb-2">{product.name}</h3>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mb-3">
                   <p className="font-bold text-shop-dark-purple">₹{product.price}</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button 
                     size="sm" 
                     className="bg-shop-purple hover:bg-shop-dark-purple"
                     onClick={() => handleViewDetails(product.id)}
                   >
                     View Details
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-shop-purple text-shop-purple hover:bg-shop-light-purple"
+                    onClick={() => handleAddToCart(product.id)}
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    Add to Cart
                   </Button>
                 </div>
               </div>
