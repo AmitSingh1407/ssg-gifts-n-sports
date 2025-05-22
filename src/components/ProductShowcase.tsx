@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const products = [
   {
@@ -34,6 +35,23 @@ const products = [
 ];
 
 const ProductShowcase = () => {
+  const handleViewDetails = (productId: number) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      toast({
+        title: product.name,
+        description: `Price: ₹${product.price} - View product details`,
+      });
+    }
+  };
+
+  const handleViewAllProducts = () => {
+    toast({
+      title: "View All Products",
+      description: "Browsing all available products",
+    });
+  };
+
   return (
     <section id="products" className="py-16">
       <div className="container mx-auto px-4">
@@ -62,7 +80,11 @@ const ProductShowcase = () => {
                 <h3 className="font-medium text-lg mb-2">{product.name}</h3>
                 <div className="flex justify-between items-center">
                   <p className="font-bold text-shop-dark-purple">₹{product.price}</p>
-                  <Button size="sm" className="bg-shop-purple hover:bg-shop-dark-purple">
+                  <Button 
+                    size="sm" 
+                    className="bg-shop-purple hover:bg-shop-dark-purple"
+                    onClick={() => handleViewDetails(product.id)}
+                  >
                     View Details
                   </Button>
                 </div>
@@ -72,7 +94,12 @@ const ProductShowcase = () => {
         </div>
         
         <div className="mt-12 text-center">
-          <Button size="lg" variant="outline" className="border-shop-purple text-shop-purple hover:bg-shop-light-purple">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-shop-purple text-shop-purple hover:bg-shop-light-purple"
+            onClick={handleViewAllProducts}
+          >
             View All Products
           </Button>
         </div>

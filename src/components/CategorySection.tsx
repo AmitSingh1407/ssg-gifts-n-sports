@@ -8,6 +8,7 @@ import {
   Gamepad2,
   Beer 
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   {
@@ -55,6 +56,17 @@ const categories = [
 ];
 
 const CategorySection = () => {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categoryId: number) => {
+    console.log(`Category ${categoryId} clicked`);
+    // Navigate to a category page in a real app
+    // navigate(`/category/${categoryId}`);
+    
+    // For now, we'll just scroll to the products section
+    document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section id="categories" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -67,10 +79,17 @@ const CategorySection = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {categories.map((category) => (
-            <a
+            <div
               key={category.id}
-              href="#"
-              className={`category-card ${category.color}`}
+              className={`category-card ${category.color} cursor-pointer`}
+              onClick={() => handleCategoryClick(category.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleCategoryClick(category.id);
+                }
+              }}
             >
               <div className="mb-3 text-gray-800">
                 {category.icon}
@@ -79,7 +98,7 @@ const CategorySection = () => {
               <p className="text-sm text-gray-700 text-center hidden md:block">
                 {category.description}
               </p>
-            </a>
+            </div>
           ))}
         </div>
       </div>

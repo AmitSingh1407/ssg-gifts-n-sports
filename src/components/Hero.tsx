@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag } from "lucide-react";
 
 const Hero = () => {
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="w-full min-h-[70vh] hero-gradient text-white relative overflow-hidden">
       {/* Decorative Elements */}
@@ -20,11 +27,20 @@ const Hero = () => {
             Discover an extensive selection of gifts, toys, sports equipment and more. Quality products delivered to your doorstep.
           </p>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            <Button size="lg" className="bg-white text-shop-dark-purple hover:bg-gray-100 font-medium">
+            <Button 
+              size="lg" 
+              className="bg-white text-shop-dark-purple hover:bg-gray-100 font-medium"
+              onClick={() => scrollToSection('products')}
+            >
               <ShoppingBag className="mr-2 h-5 w-5" />
               Shop Now
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white hover:bg-white/10"
+              onClick={() => scrollToSection('categories')}
+            >
               Explore Categories
             </Button>
           </div>
