@@ -8,7 +8,6 @@ import {
   Gamepad2,
   Beer 
 } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
 
 const categories = [
   {
@@ -56,14 +55,16 @@ const categories = [
 ];
 
 const CategorySection = () => {
-  const navigate = useNavigate();
-
-  const handleCategoryClick = (categoryId: number) => {
-    console.log(`Category ${categoryId} clicked`);
-    // Navigate to a category page in a real app
-    // navigate(`/category/${categoryId}`);
+  const handleCategoryClick = (categoryName: string) => {
+    console.log(`Category ${categoryName} clicked`);
     
-    // For now, we'll just scroll to the products section
+    // Dispatch custom event with category name
+    const event = new CustomEvent('categorySelected', {
+      detail: { category: categoryName }
+    });
+    window.dispatchEvent(event);
+    
+    // Scroll to the products section
     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -81,13 +82,13 @@ const CategorySection = () => {
           {categories.map((category) => (
             <div
               key={category.id}
-              className={`category-card ${category.color} cursor-pointer`}
-              onClick={() => handleCategoryClick(category.id)}
+              className={`category-card ${category.color} cursor-pointer hover:shadow-lg transition-all transform hover:scale-105`}
+              onClick={() => handleCategoryClick(category.name)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  handleCategoryClick(category.id);
+                  handleCategoryClick(category.name);
                 }
               }}
             >
