@@ -3,7 +3,7 @@ import React from 'react';
 import { 
   Gift, 
   ShoppingBag, 
-  Bat, 
+  Bath, // Using Bath as a replacement since Bat is not available
   FlagTriangleRight, 
   Gamepad2,
   Beer 
@@ -20,7 +20,7 @@ const categories = [
   {
     id: 2,
     name: 'Cricket Gear',
-    icon: <Bat className="w-10 h-10" />,
+    icon: <Bath className="w-10 h-10" />, // Using Bath as a temporary icon
     color: 'bg-shop-soft-green',
     description: 'Professional cricket bats, balls and accessories'
   },
