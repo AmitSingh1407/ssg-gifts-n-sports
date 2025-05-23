@@ -10,21 +10,21 @@ const products = [
     id: 1,
     name: 'Premium Cricket Bat',
     price: 1999,
-    image: 'https://images.unsplash.com/photo-1721322800607-8c38375eef04?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1593766788306-28561775e01d?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   {
     id: 7,
     name: 'Professional Cricket Ball',
     price: 499,
-    image: 'https://images.unsplash.com/photo-1617354232539-5cf20380ee38?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   {
     id: 8,
     name: 'Cricket Helmet',
     price: 1299,
-    image: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1584714268709-c3dd9c92b378?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   
@@ -33,7 +33,7 @@ const products = [
     id: 2,
     name: 'Mini Drone with Camera',
     price: 2499,
-    image: 'https://images.unsplash.com/photo-1487887235947-a955ef187fcc?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?auto=format&fit=crop&q=80&w=500',
     category: 'Drones',
   },
   {
@@ -47,7 +47,7 @@ const products = [
     id: 10,
     name: 'Racing Drone Kit',
     price: 3499,
-    image: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80&w=500',
     category: 'Drones',
   },
   
@@ -56,7 +56,7 @@ const products = [
     id: 3,
     name: 'Educational Building Blocks',
     price: 599,
-    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=500',
     category: 'Toys',
   },
   {
@@ -70,7 +70,7 @@ const products = [
     id: 12,
     name: 'Plush Animal Collection',
     price: 449,
-    image: 'https://images.unsplash.com/photo-1556012018-50c5c0da73bf?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?auto=format&fit=crop&q=80&w=500',
     category: 'Toys',
   },
   
@@ -79,7 +79,7 @@ const products = [
     id: 4,
     name: 'Artificial Flower Pot',
     price: 349,
-    image: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1616500163246-c0afa6eaf032?auto=format&fit=crop&q=80&w=500',
     category: 'Gift Items',
   },
   {
@@ -93,7 +93,7 @@ const products = [
     id: 14,
     name: 'Personalized Photo Frame',
     price: 499,
-    image: 'https://images.unsplash.com/photo-1564925312877-0e82d44d462b?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1531040825271-32d3163a9fc5?auto=format&fit=crop&q=80&w=500',
     category: 'Gift Items',
   },
   
@@ -116,7 +116,7 @@ const products = [
     id: 17,
     name: 'Tennis Racket',
     price: 1299,
-    image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1617082052996-513db5a4aeef?auto=format&fit=crop&q=80&w=500',
     category: 'Sports Goods',
   },
   
@@ -125,21 +125,21 @@ const products = [
     id: 18,
     name: 'Insulated Water Bottle',
     price: 599,
-    image: 'https://images.unsplash.com/photo-1589365278144-c9e705f843ba?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=500',
     category: 'Water Bottles',
   },
   {
     id: 19,
     name: 'Sports Water Bottle',
     price: 399,
-    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1589365278144-c9e705f843ba?auto=format&fit=crop&q=80&w=500',
     category: 'Water Bottles',
   },
   {
     id: 20,
     name: 'Glass Water Bottle',
     price: 499,
-    image: 'https://images.unsplash.com/photo-1610631578088-403e8ba6444a?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1556401615-c909c3d67480?auto=format&fit=crop&q=80&w=500',
     category: 'Water Bottles',
   }
 ];
