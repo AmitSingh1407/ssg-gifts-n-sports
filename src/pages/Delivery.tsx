@@ -50,10 +50,8 @@ const DeliveryPage = () => {
       description: "Your delivery details have been saved successfully",
     });
 
-    // In a real app, you would proceed to payment here
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    // Navigate to payment page
+    navigate('/payment');
   };
 
   return (
