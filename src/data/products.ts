@@ -13,7 +13,7 @@ export const products: Product[] = [
     id: 1,
     name: 'Premium Cricket Bat',
     price: 1999,
-    image: 'https://images.unsplash.com/photo-1593766788306-28561775e01d?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1595435742656-5272ce5d9d3d?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   {
@@ -27,7 +27,7 @@ export const products: Product[] = [
     id: 8,
     name: 'Cricket Helmet',
     price: 1299,
-    image: 'https://images.unsplash.com/photo-1584714268709-c3dd9c92b378?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1623962072339-0d57a9abe861?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   
@@ -82,7 +82,7 @@ export const products: Product[] = [
     id: 4,
     name: 'Artificial Flower Pot',
     price: 349,
-    image: 'https://images.unsplash.com/photo-1616500163246-c0afa6eaf032?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1602083577130-11ad4b70df42?auto=format&fit=crop&q=80&w=500',
     category: 'Gift Items',
   },
   {
@@ -96,7 +96,7 @@ export const products: Product[] = [
     id: 14,
     name: 'Personalized Photo Frame',
     price: 499,
-    image: 'https://images.unsplash.com/photo-1531040825271-32d3163a9fc5?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=500',
     category: 'Gift Items',
   },
   
@@ -119,7 +119,7 @@ export const products: Product[] = [
     id: 17,
     name: 'Tennis Racket',
     price: 1299,
-    image: 'https://images.unsplash.com/photo-1617082052996-513db5a4aeef?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1595123550441-d377e017de6a?auto=format&fit=crop&q=80&w=500',
     category: 'Sports Goods',
   },
   
@@ -142,7 +142,7 @@ export const products: Product[] = [
     id: 20,
     name: 'Glass Water Bottle',
     price: 499,
-    image: 'https://images.unsplash.com/photo-1556401615-c909c3d67480?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1570533136641-42af15a4e264?auto=format&fit=crop&q=80&w=500',
     category: 'Water Bottles',
   }
 ];
