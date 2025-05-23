@@ -3,11 +3,11 @@ import React from 'react';
 import { 
   Gift, 
   ShoppingBag, 
-  Cricket, 
+  Tennis, // Replacing Cricket with Tennis
   FlagTriangleRight, 
   Gamepad2,
   Beer,
-  Drone
+  Plane // Replacing Drone with Plane
 } from "lucide-react";
 
 const categories = [
@@ -21,14 +21,14 @@ const categories = [
   {
     id: 2,
     name: 'Cricket Gear',
-    icon: <Cricket className="w-10 h-10" />,
+    icon: <Tennis className="w-10 h-10" />, // Using Tennis icon instead
     color: 'bg-shop-soft-green',
     description: 'Professional cricket bats, balls and accessories'
   },
   {
     id: 3,
     name: 'Drones',
-    icon: <Drone className="w-10 h-10" />,
+    icon: <Plane className="w-10 h-10" />, // Using Plane icon instead
     color: 'bg-shop-light-purple',
     description: 'High-tech drones with advanced features'
   },
