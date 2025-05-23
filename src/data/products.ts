@@ -13,7 +13,7 @@ export const products: Product[] = [
     id: 1,
     name: 'Premium Cricket Bat',
     price: 1999,
-    image: 'https://images.unsplash.com/photo-1595435742656-5272ce5d9d3d?auto=format&fit=crop&q=80&w=500',
+    image: 'C:\Users\HP\Downloads\SS Premium English Willow Cricket Bat Standard Size Free Grip-600x600.jpg',
     category: 'Cricket Gear',
   },
   {
