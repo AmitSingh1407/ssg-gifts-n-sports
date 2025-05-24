@@ -119,7 +119,7 @@ export const products: Product[] = [
     id: 17,
     name: 'Tennis Racket',
     price: 1299,
-    image: 'https://images.unsplash.com/photo-1595123550441-d377e017de6a?auto=format&fit=crop&q=80&w=500',
+    image: '/lovable-uploads/3ace89a3-0a82-461f-93e0-2167abc79019.png',
     category: 'Sports Goods',
   },
   
