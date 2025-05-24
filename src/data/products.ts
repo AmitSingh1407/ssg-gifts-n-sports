@@ -82,7 +82,7 @@ export const products: Product[] = [
     id: 4,
     name: 'Artificial Flower Pot',
     price: 349,
-    image: 'https://images.unsplash.com/photo-1602083577130-11ad4b70df42?auto=format&fit=crop&q=80&w=500',
+    image: '/lovable-uploads/112ce0e7-2379-4267-b4c7-75c45b3b9bf3.png',
     category: 'Gift Items',
   },
   {
