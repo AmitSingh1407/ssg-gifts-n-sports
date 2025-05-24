@@ -1,4 +1,3 @@
-
 export interface Product {
   id: number;
   name: string;
@@ -13,7 +12,7 @@ export const products: Product[] = [
     id: 1,
     name: 'Premium Cricket Bat',
     price: 1999,
-    image: 'https://images.unsplash.com/photo-1595435742656-5272ce5d9d3d?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   {
@@ -27,7 +26,7 @@ export const products: Product[] = [
     id: 8,
     name: 'Cricket Helmet',
     price: 1299,
-    image: 'https://images.unsplash.com/photo-1623962072339-0d57a9abe861?auto=format&fit=crop&q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&q=80&w=500',
     category: 'Cricket Gear',
   },
   
