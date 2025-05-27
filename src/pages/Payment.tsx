@@ -10,7 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, QrCode, Coins, Truck, Shield, Lock, CheckCircle } from "lucide-react";
+import { CreditCard, QrCode, Coins, Truck, Shield, Lock, CheckCircle, Timer, Plus, Minus } from "lucide-react";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -18,6 +18,10 @@ const PaymentPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('standard');
   const [pincode, setPincode] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [showQuantityDialog, setShowQuantityDialog] = useState(true);
   
   // Card details state
   const [cardDetails, setCardDetails] = useState({
@@ -34,50 +38,62 @@ const PaymentPage = () => {
     qrScanned: false
   });
 
-  // Order details
-  const [orderDetails, setOrderDetails] = useState({
-    subtotal: 2499,
-    gst: 450,
-    deliveryFee: 49,
-    codFee: 0,
-    distanceFee: 0,
-    total: 2998
-  });
+  // Base product price
+  const basePrice = 2499;
+  const gstRate = 0.18;
 
-  // Update delivery fee based on pincode/distance
-  useEffect(() => {
-    const calculateDeliveryFee = () => {
-      if (!pincode) return 49;
-      
-      const pincodeNum = parseInt(pincode, 10);
-      if (isNaN(pincodeNum)) return 49;
-      
-      if (pincodeNum >= 500000 && pincodeNum < 600000) {
-        return 99;
-      } else if (pincodeNum >= 600000) {
-        return 149;
-      }
-      
-      return 49;
-    };
-    
-    const newDeliveryFee = deliveryMethod === 'express' ? 99 : calculateDeliveryFee();
+  // Calculate order details based on quantity
+  const calculateOrderDetails = () => {
+    const subtotal = basePrice * quantity;
+    const gst = Math.round(subtotal * gstRate);
+    const deliveryFee = subtotal >= 2000 ? 0 : (deliveryMethod === 'express' ? 99 : 49);
     const codFee = paymentMethod === 'cod' ? 40 : 0;
-    
-    setOrderDetails(prev => {
-      const newTotal = prev.subtotal + prev.gst + newDeliveryFee + codFee;
-      return {
-        ...prev,
-        deliveryFee: newDeliveryFee,
-        codFee: codFee,
-        total: newTotal
-      };
-    });
-  }, [pincode, deliveryMethod, paymentMethod]);
+    const total = subtotal + gst + deliveryFee + codFee;
+
+    return {
+      subtotal,
+      gst,
+      deliveryFee,
+      codFee,
+      total
+    };
+  };
+
+  const orderDetails = calculateOrderDetails();
+
+  // Timer countdown effect
+  useEffect(() => {
+    if (isTimerActive && timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (isTimerActive && timeLeft === 0) {
+      // Timer expired
+      setIsTimerActive(false);
+      toast({
+        title: "Payment Timeout",
+        description: "Your order has been automatically canceled due to timeout.",
+        variant: "destructive",
+      });
+      setTimeout(() => navigate('/'), 2000);
+    }
+  }, [isTimerActive, timeLeft, navigate]);
+
+  // Handle quantity change
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1) {
+      setQuantity(newQuantity);
+    }
+  };
 
   // Handle payment method change
   const handlePaymentMethodChange = (value: string) => {
     setPaymentMethod(value);
+    if (value === 'upi') {
+      setIsTimerActive(true);
+      setTimeLeft(30);
+    } else {
+      setIsTimerActive(false);
+    }
   };
 
   // Handle card input changes
@@ -149,12 +165,13 @@ const PaymentPage = () => {
     }
 
     setIsProcessing(true);
+    setIsTimerActive(false);
     
     setTimeout(() => {
       setIsProcessing(false);
       toast({
         title: `${paymentMethod === 'cod' ? 'Order Placed' : 'Payment Successful'}`,
-        description: `Your order has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
+        description: `Your order of ${quantity} item(s) has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
       });
       
       setTimeout(() => {
@@ -271,18 +288,30 @@ const PaymentPage = () => {
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <QrCode className="h-5 w-5 text-green-600" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold text-green-800">UPI Payment</h3>
                 <p className="text-sm text-green-600">Instant & secure UPI payments</p>
               </div>
+              {isTimerActive && (
+                <div className="flex items-center gap-2 bg-red-100 px-3 py-2 rounded-lg">
+                  <Timer className="h-4 w-4 text-red-600" />
+                  <span className="font-mono text-sm font-semibold text-red-600">
+                    {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                  </span>
+                </div>
+              )}
             </div>
             
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg p-6 border border-green-200">
-                <h4 className="font-medium mb-4">Scan QR Code</h4>
+                <h4 className="font-medium mb-4">Scan PhonePe QR Code</h4>
                 <div className="flex flex-col items-center">
-                  <div className="w-40 h-40 bg-gray-100 rounded-lg mb-4 flex items-center justify-center border-2 border-dashed border-gray-300">
-                    <QrCode size={80} className="text-gray-400" />
+                  <div className="w-48 h-48 bg-white rounded-lg mb-4 flex items-center justify-center border-2 border-green-200 overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/5e470996-07c9-4102-b014-9896f83a8b13.png" 
+                      alt="PhonePe QR Code" 
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   {!upiDetails.qrScanned ? (
                     <Button 
@@ -291,12 +320,12 @@ const PaymentPage = () => {
                       disabled={isProcessing}
                       className="w-full border-green-300 text-green-700 hover:bg-green-50"
                     >
-                      {isProcessing ? "Scanning..." : "Simulate QR Scan"}
+                      {isProcessing ? "Scanning..." : "Confirm Payment"}
                     </Button>
                   ) : (
                     <div className="flex items-center gap-2 text-green-600 font-medium">
                       <CheckCircle size={20} />
-                      <span>QR Scanned Successfully</span>
+                      <span>Payment Confirmed</span>
                     </div>
                   )}
                 </div>
@@ -312,15 +341,15 @@ const PaymentPage = () => {
                       name="id" 
                       value={upiDetails.id} 
                       onChange={handleUpiInputChange} 
-                      placeholder="yourname@paytm" 
+                      placeholder="yourname@phonepe" 
                       className="mt-1 h-12"
                     />
                   </div>
                   <div className="text-xs text-gray-500">
                     <p className="mb-2 font-medium">Supported UPI Apps:</p>
                     <div className="grid grid-cols-2 gap-1">
-                      <span className="px-2 py-1 bg-gray-100 rounded text-center">Google Pay</span>
                       <span className="px-2 py-1 bg-gray-100 rounded text-center">PhonePe</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded text-center">Google Pay</span>
                       <span className="px-2 py-1 bg-gray-100 rounded text-center">Paytm</span>
                       <span className="px-2 py-1 bg-gray-100 rounded text-center">BHIM</span>
                     </div>
@@ -351,6 +380,40 @@ const PaymentPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Payment Methods */}
               <div className="lg:col-span-2">
+                {/* Quantity Selection */}
+                <Card className="shadow-sm mb-6">
+                  <CardHeader>
+                    <CardTitle>Order Details</CardTitle>
+                    <CardDescription>Select quantity and review your order</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                      <div>
+                        <h3 className="font-semibold">Artificial Flower Pot</h3>
+                        <p className="text-sm text-gray-600">₹{basePrice.toLocaleString()} per item</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuantityChange(quantity - 1)}
+                          disabled={quantity <= 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="font-semibold text-lg w-12 text-center">{quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuantityChange(quantity + 1)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
                 <Card className="shadow-sm">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2">
@@ -383,7 +446,7 @@ const PaymentPage = () => {
                           <RadioGroupItem value="upi" id="upi" />
                           <Label htmlFor="upi" className="flex items-center gap-3 cursor-pointer font-medium">
                             <QrCode className="h-5 w-5 text-green-600" />
-                            UPI Payment
+                            PhonePe / UPI Payment
                           </Label>
                         </div>
                       </div>
@@ -416,7 +479,7 @@ const PaymentPage = () => {
                   <CardContent className="space-y-4">
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Subtotal</span>
+                        <span className="text-gray-600">Items ({quantity})</span>
                         <span>₹{orderDetails.subtotal.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-sm">
@@ -425,8 +488,13 @@ const PaymentPage = () => {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Delivery Fee</span>
-                        <span>₹{orderDetails.deliveryFee}</span>
+                        <span className={orderDetails.deliveryFee === 0 ? 'text-green-600 font-medium' : ''}>
+                          {orderDetails.deliveryFee === 0 ? 'FREE' : `₹${orderDetails.deliveryFee}`}
+                        </span>
                       </div>
+                      {orderDetails.deliveryFee === 0 && (
+                        <p className="text-xs text-green-600">🎉 Free delivery on orders ≥ ₹2000</p>
+                      )}
                       {orderDetails.codFee > 0 && (
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">COD Fee</span>
@@ -450,7 +518,7 @@ const PaymentPage = () => {
                         className="mt-1"
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        Delivery charges may vary by location
+                        {orderDetails.deliveryFee === 0 ? 'Free delivery applied!' : 'Order ₹2000+ for free delivery'}
                       </p>
                     </div>
                     
@@ -464,7 +532,7 @@ const PaymentPage = () => {
                     <Button 
                       className="w-full h-12 bg-shop-purple hover:bg-shop-dark-purple text-lg font-semibold"
                       onClick={handleSubmitPayment}
-                      disabled={isProcessing}
+                      disabled={isProcessing || (paymentMethod === 'upi' && timeLeft === 0)}
                     >
                       {isProcessing ? (
                         <div className="flex items-center gap-2">
