@@ -10,11 +10,11 @@ import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, QrCode, Coins, Truck } from "lucide-react";
+import { CreditCard, QrCode, Coins, Truck, Shield, Lock, CheckCircle } from "lucide-react";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState('card');
   const [isProcessing, setIsProcessing] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('standard');
   const [pincode, setPincode] = useState('');
@@ -34,7 +34,7 @@ const PaymentPage = () => {
     qrScanned: false
   });
 
-  // Order details - in a real app, these would come from your cart state
+  // Order details
   const [orderDetails, setOrderDetails] = useState({
     subtotal: 2499,
     gst: 450,
@@ -46,22 +46,19 @@ const PaymentPage = () => {
 
   // Update delivery fee based on pincode/distance
   useEffect(() => {
-    // Calculate delivery fee based on pincode
-    // This is a simplified example - in a real app, you might call an API
     const calculateDeliveryFee = () => {
-      if (!pincode) return 49; // Default fee
+      if (!pincode) return 49;
       
-      // Example logic: higher fee for certain areas
       const pincodeNum = parseInt(pincode, 10);
       if (isNaN(pincodeNum)) return 49;
       
       if (pincodeNum >= 500000 && pincodeNum < 600000) {
-        return 99; // Higher fee for this region
+        return 99;
       } else if (pincodeNum >= 600000) {
-        return 149; // Even higher fee for far regions
+        return 149;
       }
       
-      return 49; // Default fee
+      return 49;
     };
     
     const newDeliveryFee = deliveryMethod === 'express' ? 99 : calculateDeliveryFee();
@@ -86,7 +83,21 @@ const PaymentPage = () => {
   // Handle card input changes
   const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCardDetails(prev => ({ ...prev, [name]: value }));
+    let formattedValue = value;
+    
+    // Format card number with spaces
+    if (name === 'number') {
+      formattedValue = value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
+      if (formattedValue.length > 19) formattedValue = formattedValue.slice(0, 19);
+    }
+    
+    // Format expiry date
+    if (name === 'expiry') {
+      formattedValue = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2');
+      if (formattedValue.length > 5) formattedValue = formattedValue.slice(0, 5);
+    }
+    
+    setCardDetails(prev => ({ ...prev, [name]: formattedValue }));
   };
 
   // Handle UPI input changes
@@ -110,7 +121,6 @@ const PaymentPage = () => {
 
   // Handle payment submission
   const handleSubmitPayment = () => {
-    // Validate based on payment method
     if (paymentMethod === 'card') {
       if (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvv) {
         toast({
@@ -121,8 +131,7 @@ const PaymentPage = () => {
         return;
       }
       
-      // Simple card validation
-      if (cardDetails.number.length < 16 || cardDetails.cvv.length < 3) {
+      if (cardDetails.number.replace(/\s/g, '').length < 16 || cardDetails.cvv.length < 3) {
         toast({
           title: "Invalid Card Details",
           description: "Please check your card information",
@@ -139,7 +148,6 @@ const PaymentPage = () => {
       return;
     }
 
-    // Processing payment
     setIsProcessing(true);
     
     setTimeout(() => {
@@ -149,95 +157,108 @@ const PaymentPage = () => {
         description: `Your order has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
       });
       
-      // In a real app, you would save the order to your database here
-      
-      // Redirect to home or order confirmation page
       setTimeout(() => {
         navigate('/');
       }, 2000);
     }, 2000);
   };
 
-  // Render payment method content based on selection
+  // Render payment method content
   const renderPaymentMethodContent = () => {
     switch (paymentMethod) {
       case 'cod':
         return (
-          <div className="p-4 border rounded-md mt-4">
-            <h3 className="font-medium mb-2 flex items-center gap-2">
-              <Coins className="h-5 w-5 text-shop-purple" />
-              Cash on Delivery
-            </h3>
-            <p className="text-gray-600 mb-4">Pay with cash when your order is delivered.</p>
-            <p className="text-sm font-medium">Additional COD fee: ₹{orderDetails.codFee}</p>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                <Coins className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-amber-800">Cash on Delivery</h3>
+                <p className="text-sm text-amber-600">Pay with cash when your order arrives</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-md p-4 border border-amber-200">
+              <p className="text-sm text-gray-600 mb-2">Additional COD handling fee applies</p>
+              <p className="text-lg font-semibold text-amber-700">+ ₹{orderDetails.codFee}</p>
+            </div>
           </div>
         );
 
       case 'card':
         return (
-          <div className="p-4 border rounded-md mt-4">
-            <h3 className="font-medium mb-4 flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-shop-purple" />
-              Credit/Debit Card
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="cardNumber">Card Number</Label>
-                <Input 
-                  id="cardNumber" 
-                  name="number" 
-                  value={cardDetails.number} 
-                  onChange={handleCardInputChange} 
-                  placeholder="1234 5678 9012 3456" 
-                  maxLength={16}
-                />
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <CreditCard className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <Label htmlFor="cardName">Cardholder Name</Label>
-                <Input 
-                  id="cardName" 
-                  name="name" 
-                  value={cardDetails.name} 
-                  onChange={handleCardInputChange} 
-                  placeholder="John Doe" 
-                />
+                <h3 className="font-semibold text-blue-800">Credit/Debit Card</h3>
+                <p className="text-sm text-blue-600">Secure payment with SSL encryption</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+            </div>
+            <div className="bg-white rounded-lg p-6 border border-blue-200">
+              <div className="space-y-6">
                 <div>
-                  <Label htmlFor="cardExpiry">Expiry Date</Label>
+                  <Label htmlFor="cardNumber" className="text-sm font-medium text-gray-700">Card Number</Label>
                   <Input 
-                    id="cardExpiry" 
-                    name="expiry" 
-                    value={cardDetails.expiry} 
+                    id="cardNumber" 
+                    name="number" 
+                    value={cardDetails.number} 
                     onChange={handleCardInputChange} 
-                    placeholder="MM/YY" 
-                    maxLength={5}
+                    placeholder="1234 5678 9012 3456" 
+                    className="mt-1 h-12 text-lg tracking-wide"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="cardCvv">CVV</Label>
+                  <Label htmlFor="cardName" className="text-sm font-medium text-gray-700">Cardholder Name</Label>
                   <Input 
-                    id="cardCvv" 
-                    name="cvv" 
-                    value={cardDetails.cvv} 
+                    id="cardName" 
+                    name="name" 
+                    value={cardDetails.name} 
                     onChange={handleCardInputChange} 
-                    placeholder="123" 
-                    type="password" 
-                    maxLength={3}
+                    placeholder="Enter name as on card" 
+                    className="mt-1 h-12"
                   />
                 </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="saveCard" 
-                  checked={cardDetails.saveCard} 
-                  onCheckedChange={(checked) => 
-                    setCardDetails(prev => ({ ...prev, saveCard: checked === true }))
-                  } 
-                />
-                <label htmlFor="saveCard" className="text-sm text-gray-600 cursor-pointer">
-                  Save card for future payments
-                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="cardExpiry" className="text-sm font-medium text-gray-700">Expiry Date</Label>
+                    <Input 
+                      id="cardExpiry" 
+                      name="expiry" 
+                      value={cardDetails.expiry} 
+                      onChange={handleCardInputChange} 
+                      placeholder="MM/YY" 
+                      className="mt-1 h-12"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cardCvv" className="text-sm font-medium text-gray-700">CVV</Label>
+                    <Input 
+                      id="cardCvv" 
+                      name="cvv" 
+                      value={cardDetails.cvv} 
+                      onChange={handleCardInputChange} 
+                      placeholder="123" 
+                      type="password" 
+                      className="mt-1 h-12"
+                      maxLength={4}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3 pt-2">
+                  <Checkbox 
+                    id="saveCard" 
+                    checked={cardDetails.saveCard} 
+                    onCheckedChange={(checked) => 
+                      setCardDetails(prev => ({ ...prev, saveCard: checked === true }))
+                    } 
+                  />
+                  <label htmlFor="saveCard" className="text-sm text-gray-600 cursor-pointer">
+                    Save this card for faster checkout next time
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -245,55 +266,63 @@ const PaymentPage = () => {
 
       case 'upi':
         return (
-          <div className="p-4 border rounded-md mt-4">
-            <h3 className="font-medium mb-4 flex items-center gap-2">
-              <QrCode className="h-5 w-5 text-shop-purple" />
-              UPI / QR Payment
-            </h3>
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6 mt-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <QrCode className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-green-800">UPI Payment</h3>
+                <p className="text-sm text-green-600">Instant & secure UPI payments</p>
+              </div>
+            </div>
             
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-                <p className="text-gray-600 mb-4">Option 1: Scan this QR code with your UPI app</p>
-                <div className="border border-dashed border-gray-300 rounded-lg p-4 mb-4 flex flex-col items-center justify-center">
-                  <div className="w-48 h-48 bg-gray-100 rounded-md mb-4 flex items-center justify-center">
-                    <QrCode size={120} className="text-gray-500" />
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg p-6 border border-green-200">
+                <h4 className="font-medium mb-4">Scan QR Code</h4>
+                <div className="flex flex-col items-center">
+                  <div className="w-40 h-40 bg-gray-100 rounded-lg mb-4 flex items-center justify-center border-2 border-dashed border-gray-300">
+                    <QrCode size={80} className="text-gray-400" />
                   </div>
                   {!upiDetails.qrScanned ? (
                     <Button 
                       variant="outline" 
                       onClick={handleQrScan} 
-                      className="mt-2"
                       disabled={isProcessing}
+                      className="w-full border-green-300 text-green-700 hover:bg-green-50"
                     >
-                      {isProcessing ? "Processing..." : "Simulate QR Scan"}
+                      {isProcessing ? "Scanning..." : "Simulate QR Scan"}
                     </Button>
                   ) : (
-                    <span className="text-green-600 font-medium">QR Scanned ✓</span>
+                    <div className="flex items-center gap-2 text-green-600 font-medium">
+                      <CheckCircle size={20} />
+                      <span>QR Scanned Successfully</span>
+                    </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex-1">
-                <p className="text-gray-600 mb-4">Option 2: Enter your UPI ID</p>
+              <div className="bg-white rounded-lg p-6 border border-green-200">
+                <h4 className="font-medium mb-4">Enter UPI ID</h4>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="upiId">UPI ID</Label>
+                    <Label htmlFor="upiId" className="text-sm font-medium text-gray-700">UPI ID</Label>
                     <Input 
                       id="upiId" 
                       name="id" 
                       value={upiDetails.id} 
                       onChange={handleUpiInputChange} 
-                      placeholder="name@upi" 
+                      placeholder="yourname@paytm" 
+                      className="mt-1 h-12"
                     />
                   </div>
-                  <div className="text-sm text-gray-500">
-                    <p>Supported UPI apps:</p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="px-2 py-1 bg-gray-100 rounded-md text-xs">Google Pay</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded-md text-xs">PhonePe</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded-md text-xs">Paytm</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded-md text-xs">Amazon Pay</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded-md text-xs">BHIM</span>
+                  <div className="text-xs text-gray-500">
+                    <p className="mb-2 font-medium">Supported UPI Apps:</p>
+                    <div className="grid grid-cols-2 gap-1">
+                      <span className="px-2 py-1 bg-gray-100 rounded text-center">Google Pay</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded text-center">PhonePe</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded text-center">Paytm</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded text-center">BHIM</span>
                     </div>
                   </div>
                 </div>
@@ -307,105 +336,69 @@ const PaymentPage = () => {
     }
   };
 
-  // Order summary component
-  const OrderSummary = () => {    
-    return (
-      <div className="border rounded-md p-4 space-y-4">
-        <h3 className="font-medium text-lg">Order Summary</h3>
-        <div className="space-y-2 divide-y">
-          <div className="flex justify-between pb-2">
-            <span>Subtotal</span>
-            <span>₹{orderDetails.subtotal.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between py-2">
-            <span>GST (18%)</span>
-            <span>₹{orderDetails.gst}</span>
-          </div>
-          <div className="flex justify-between py-2">
-            <span>Delivery Fee</span>
-            <span>₹{orderDetails.deliveryFee}</span>
-          </div>
-          {orderDetails.codFee > 0 && (
-            <div className="flex justify-between py-2">
-              <span>COD Fee</span>
-              <span>₹{orderDetails.codFee}</span>
-            </div>
-          )}
-          <div className="flex justify-between py-2 font-medium">
-            <span>Total</span>
-            <span>₹{orderDetails.total.toLocaleString()}</span>
-          </div>
-        </div>
-        
-        <div className="pt-4">
-          <Label htmlFor="pincode" className="mb-1 block">Delivery Pincode</Label>
-          <Input
-            id="pincode"
-            value={pincode}
-            onChange={(e) => setPincode(e.target.value)}
-            placeholder="Enter delivery pincode"
-            className="mb-2"
-          />
-          <p className="text-xs text-gray-500">
-            Delivery charges may vary based on your location
-          </p>
-        </div>
-        
-        <div className="pt-2">
-          <div className="flex items-center gap-2 mb-2">
-            <Truck className="h-4 w-4 text-shop-purple" />
-            <span className="font-medium">Delivery Method:</span>
-            <span>
-              {deliveryMethod === 'standard' ? 'Standard (3-5 days)' : 'Express (1-2 days)'}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <main className="flex-grow py-10 bg-gray-50">
+      <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <h1 className="text-3xl font-bold text-center mb-8">Payment</h1>
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Secure Checkout</h1>
+              <p className="text-gray-600">Complete your purchase safely and securely</p>
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Choose Payment Method</CardTitle>
-                    <CardDescription>Select how you would like to pay for your order</CardDescription>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Payment Methods */}
+              <div className="lg:col-span-2">
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-green-600" />
+                      Payment Method
+                    </CardTitle>
+                    <CardDescription>Choose your preferred payment option</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <RadioGroup 
                       value={paymentMethod} 
                       onValueChange={handlePaymentMethodChange}
-                      className="grid gap-4"
+                      className="space-y-3"
                     >
-                      <div className="flex items-center space-x-2 border rounded-md p-4 hover:bg-gray-50 cursor-pointer">
-                        <RadioGroupItem value="cod" id="cod" />
-                        <Label htmlFor="cod" className="flex items-center flex-1 cursor-pointer">
-                          <span className="ml-2">Cash on Delivery</span>
-                          <span className="ml-auto text-sm text-gray-500">+ ₹40 fee</span>
-                        </Label>
+                      <div className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <RadioGroupItem value="card" id="card" />
+                            <Label htmlFor="card" className="flex items-center gap-3 cursor-pointer font-medium">
+                              <CreditCard className="h-5 w-5 text-blue-600" />
+                              Credit/Debit Card
+                            </Label>
+                          </div>
+                          <span className="text-sm text-green-600 font-medium">Recommended</span>
+                        </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2 border rounded-md p-4 hover:bg-gray-50 cursor-pointer">
-                        <RadioGroupItem value="card" id="card" />
-                        <Label htmlFor="card" className="flex items-center flex-1 cursor-pointer">
-                          <span className="ml-2">Credit/Debit Card</span>
-                        </Label>
+                      <div className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'upi' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                        <div className="flex items-center space-x-3">
+                          <RadioGroupItem value="upi" id="upi" />
+                          <Label htmlFor="upi" className="flex items-center gap-3 cursor-pointer font-medium">
+                            <QrCode className="h-5 w-5 text-green-600" />
+                            UPI Payment
+                          </Label>
+                        </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2 border rounded-md p-4 hover:bg-gray-50 cursor-pointer">
-                        <RadioGroupItem value="upi" id="upi" />
-                        <Label htmlFor="upi" className="flex items-center flex-1 cursor-pointer">
-                          <span className="ml-2">UPI / QR Payment</span>
-                          <span className="ml-auto text-sm text-gray-500">GooglePay, PhonePe, Paytm</span>
-                        </Label>
+                      <div className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <RadioGroupItem value="cod" id="cod" />
+                            <Label htmlFor="cod" className="flex items-center gap-3 cursor-pointer font-medium">
+                              <Coins className="h-5 w-5 text-amber-600" />
+                              Cash on Delivery
+                            </Label>
+                          </div>
+                          <span className="text-sm text-amber-600 font-medium">+ ₹40 fee</span>
+                        </div>
                       </div>
                     </RadioGroup>
                     
@@ -414,30 +407,91 @@ const PaymentPage = () => {
                 </Card>
               </div>
               
-              <div className="md:col-span-1">
-                <Card>
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <Card className="shadow-sm sticky top-8">
                   <CardHeader>
                     <CardTitle>Order Summary</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <OrderSummary />
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Subtotal</span>
+                        <span>₹{orderDetails.subtotal.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">GST (18%)</span>
+                        <span>₹{orderDetails.gst}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Delivery Fee</span>
+                        <span>₹{orderDetails.deliveryFee}</span>
+                      </div>
+                      {orderDetails.codFee > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">COD Fee</span>
+                          <span>₹{orderDetails.codFee}</span>
+                        </div>
+                      )}
+                      <hr className="my-3" />
+                      <div className="flex justify-between font-semibold text-lg">
+                        <span>Total</span>
+                        <span>₹{orderDetails.total.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4 border-t">
+                      <Label htmlFor="pincode" className="text-sm font-medium text-gray-700">Delivery Pincode</Label>
+                      <Input
+                        id="pincode"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value)}
+                        placeholder="Enter pincode"
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Delivery charges may vary by location
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Truck className="h-4 w-4" />
+                      <span>Standard Delivery (3-5 days)</span>
+                    </div>
                   </CardContent>
-                  <CardFooter className="flex flex-col space-y-4">
+                  
+                  <CardFooter className="flex flex-col space-y-3">
                     <Button 
-                      className="w-full bg-shop-purple hover:bg-shop-dark-purple"
+                      className="w-full h-12 bg-shop-purple hover:bg-shop-dark-purple text-lg font-semibold"
                       onClick={handleSubmitPayment}
                       disabled={isProcessing}
                     >
-                      {isProcessing ? "Processing..." : (paymentMethod === 'cod' ? 'Place Order' : 'Make Payment')}
+                      {isProcessing ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Processing...
+                        </div>
+                      ) : (
+                        <>
+                          <Lock className="h-4 w-4 mr-2" />
+                          {paymentMethod === 'cod' ? 'Place Order' : `Pay ₹${orderDetails.total.toLocaleString()}`}
+                        </>
+                      )}
                     </Button>
+                    
                     <Button 
                       variant="outline" 
-                      className="w-full border-shop-purple text-shop-purple hover:bg-shop-light-purple"
+                      className="w-full"
                       onClick={() => navigate('/delivery')}
                       disabled={isProcessing}
                     >
                       Back to Delivery
                     </Button>
+                    
+                    <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
+                      <Shield className="h-3 w-3" />
+                      <span>Secured by SSL encryption</span>
+                    </div>
                   </CardFooter>
                 </Card>
               </div>
