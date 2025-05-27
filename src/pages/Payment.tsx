@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -11,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, QrCode, Coins, Truck, Shield, Lock, CheckCircle, Timer, Plus, Minus } from "lucide-react";
+import { Product } from "@/data/products";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const PaymentPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(false);
-  const [showQuantityDialog, setShowQuantityDialog] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   
   // Card details state
   const [cardDetails, setCardDetails] = useState({
@@ -38,8 +38,19 @@ const PaymentPage = () => {
     qrScanned: false
   });
 
-  // Base product price
-  const basePrice = 2499;
+  // Load selected product from localStorage on component mount
+  useEffect(() => {
+    const storedProduct = localStorage.getItem('selectedProduct');
+    if (storedProduct) {
+      setSelectedProduct(JSON.parse(storedProduct));
+    } else {
+      // If no product in localStorage, redirect to home
+      navigate('/');
+    }
+  }, [navigate]);
+
+  // Base product price from selected product
+  const basePrice = selectedProduct?.price || 2499;
   const gstRate = 0.18;
 
   // Calculate order details based on quantity
@@ -169,9 +180,11 @@ const PaymentPage = () => {
     
     setTimeout(() => {
       setIsProcessing(false);
+      // Clear the selected product from localStorage after successful payment
+      localStorage.removeItem('selectedProduct');
       toast({
         title: `${paymentMethod === 'cod' ? 'Order Placed' : 'Payment Successful'}`,
-        description: `Your order of ${quantity} item(s) has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
+        description: `Your order of ${quantity} ${selectedProduct?.name}(s) has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
       });
       
       setTimeout(() => {
@@ -365,6 +378,11 @@ const PaymentPage = () => {
     }
   };
 
+  // Don't render if no product is selected
+  if (!selectedProduct) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
@@ -388,9 +406,16 @@ const PaymentPage = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                      <div>
-                        <h3 className="font-semibold">Artificial Flower Pot</h3>
-                        <p className="text-sm text-gray-600">₹{basePrice.toLocaleString()} per item</p>
+                      <div className="flex items-center gap-4">
+                        <img 
+                          src={selectedProduct.image} 
+                          alt={selectedProduct.name} 
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div>
+                          <h3 className="font-semibold">{selectedProduct.name}</h3>
+                          <p className="text-sm text-gray-600">₹{basePrice.toLocaleString()} per item</p>
+                        </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <Button
@@ -414,6 +439,7 @@ const PaymentPage = () => {
                   </CardContent>
                 </Card>
 
+                {/* Payment method card */}
                 <Card className="shadow-sm">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2">
@@ -550,10 +576,10 @@ const PaymentPage = () => {
                     <Button 
                       variant="outline" 
                       className="w-full"
-                      onClick={() => navigate('/delivery')}
+                      onClick={() => navigate('/')}
                       disabled={isProcessing}
                     >
-                      Back to Delivery
+                      Back to Shopping
                     </Button>
                     
                     <div className="flex items-center justify-center gap-1 text-xs text-gray-500">

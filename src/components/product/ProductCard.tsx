@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -10,6 +11,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const navigate = useNavigate();
+
   const handleViewDetails = () => {
     toast({
       title: product.name,
@@ -18,10 +21,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleAddToCart = () => {
+    // Store the selected product in localStorage and navigate to payment
+    localStorage.setItem('selectedProduct', JSON.stringify(product));
+    
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart`,
     });
+    
+    // Navigate to payment page after a short delay
+    setTimeout(() => {
+      navigate('/payment');
+    }, 1000);
   };
 
   return (
