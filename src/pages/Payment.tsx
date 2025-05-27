@@ -9,8 +9,12 @@ import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, QrCode, Coins, Truck, Shield, Lock, CheckCircle, Timer, Plus, Minus } from "lucide-react";
+import { CreditCard, QrCode, Coins, Truck, Shield, Lock, CheckCircle, Timer, Plus, Minus, X } from "lucide-react";
 import { Product } from "@/data/products";
+
+interface CartItem extends Product {
+  quantity: number;
+}
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -18,10 +22,9 @@ const PaymentPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('standard');
   const [pincode, setPincode] = useState('');
-  const [quantity, setQuantity] = useState(1);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   
   // Card details state
   const [cardDetails, setCardDetails] = useState({
@@ -38,35 +41,36 @@ const PaymentPage = () => {
     qrScanned: false
   });
 
-  // Load selected product from localStorage on component mount
+  // Load cart items from localStorage on component mount
   useEffect(() => {
-    const storedProduct = localStorage.getItem('selectedProduct');
-    if (storedProduct) {
-      setSelectedProduct(JSON.parse(storedProduct));
+    const storedCartItems = localStorage.getItem('cartItems');
+    if (storedCartItems) {
+      setCartItems(JSON.parse(storedCartItems));
     } else {
-      // If no product in localStorage, redirect to home
+      // If no items in cart, redirect to home
       navigate('/');
     }
   }, [navigate]);
 
   // Base product price from selected product
-  const basePrice = selectedProduct?.price || 2499;
   const gstRate = 0.18;
 
-  // Calculate order details based on quantity
+  // Calculate order details based on all cart items
   const calculateOrderDetails = () => {
-    const subtotal = basePrice * quantity;
+    const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     const gst = Math.round(subtotal * gstRate);
     const deliveryFee = subtotal >= 2000 ? 0 : (deliveryMethod === 'express' ? 99 : 49);
     const codFee = paymentMethod === 'cod' ? 40 : 0;
     const total = subtotal + gst + deliveryFee + codFee;
+    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return {
       subtotal,
       gst,
       deliveryFee,
       codFee,
-      total
+      total,
+      totalItems
     };
   };
 
@@ -89,10 +93,25 @@ const PaymentPage = () => {
     }
   }, [isTimerActive, timeLeft, navigate]);
 
-  // Handle quantity change
-  const handleQuantityChange = (newQuantity: number) => {
+  // Handle quantity change for specific item
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity >= 1) {
-      setQuantity(newQuantity);
+      const updatedItems = cartItems.map(item => 
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      );
+      setCartItems(updatedItems);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    }
+  };
+
+  // Remove item from cart
+  const handleRemoveItem = (itemId: string) => {
+    const updatedItems = cartItems.filter(item => item.id !== itemId);
+    setCartItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    
+    if (updatedItems.length === 0) {
+      navigate('/');
     }
   };
 
@@ -180,11 +199,10 @@ const PaymentPage = () => {
     
     setTimeout(() => {
       setIsProcessing(false);
-      // Clear the selected product from localStorage after successful payment
-      localStorage.removeItem('selectedProduct');
+      localStorage.removeItem('cartItems');
       toast({
         title: `${paymentMethod === 'cod' ? 'Order Placed' : 'Payment Successful'}`,
-        description: `Your order of ${quantity} ${selectedProduct?.name}(s) has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
+        description: `Your order of ${orderDetails.totalItems} items has been ${paymentMethod === 'cod' ? 'placed' : 'processed'} successfully!`,
       });
       
       setTimeout(() => {
@@ -378,8 +396,8 @@ const PaymentPage = () => {
     }
   };
 
-  // Don't render if no product is selected
-  if (!selectedProduct) {
+  // Don't render if no items in cart
+  if (cartItems.length === 0) {
     return null;
   }
 
@@ -398,44 +416,54 @@ const PaymentPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Payment Methods */}
               <div className="lg:col-span-2">
-                {/* Quantity Selection */}
+                {/* Cart Items */}
                 <Card className="shadow-sm mb-6">
                   <CardHeader>
                     <CardTitle>Order Details</CardTitle>
-                    <CardDescription>Select quantity and review your order</CardDescription>
+                    <CardDescription>Review and manage your cart items</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <img 
-                          src={selectedProduct.image} 
-                          alt={selectedProduct.name} 
-                          className="w-16 h-16 object-cover rounded-lg"
-                        />
-                        <div>
-                          <h3 className="font-semibold">{selectedProduct.name}</h3>
-                          <p className="text-sm text-gray-600">₹{basePrice.toLocaleString()} per item</p>
+                  <CardContent className="space-y-4">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <img 
+                            src={item.image} 
+                            alt={item.name} 
+                            className="w-16 h-16 object-cover rounded-lg"
+                          />
+                          <div>
+                            <h3 className="font-semibold">{item.name}</h3>
+                            <p className="text-sm text-gray-600">₹{item.price.toLocaleString()} per item</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="font-semibold text-lg w-12 text-center">{item.quantity}</span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRemoveItem(item.id)}
+                            className="ml-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleQuantityChange(quantity - 1)}
-                          disabled={quantity <= 1}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <span className="font-semibold text-lg w-12 text-center">{quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleQuantityChange(quantity + 1)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -505,7 +533,7 @@ const PaymentPage = () => {
                   <CardContent className="space-y-4">
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Items ({quantity})</span>
+                        <span className="text-gray-600">Items ({orderDetails.totalItems})</span>
                         <span>₹{orderDetails.subtotal.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-sm">

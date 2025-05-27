@@ -21,8 +21,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleAddToCart = () => {
-    // Store the selected product in localStorage and navigate to payment
-    localStorage.setItem('selectedProduct', JSON.stringify(product));
+    // Get existing cart items or initialize empty array
+    const existingCart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    
+    // Check if product already exists in cart
+    const existingItemIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    
+    if (existingItemIndex >= 0) {
+      // If product exists, increment quantity
+      existingCart[existingItemIndex].quantity += 1;
+    } else {
+      // If new product, add with quantity 1
+      existingCart.push({
+        ...product,
+        quantity: 1
+      });
+    }
+    
+    // Store updated cart
+    localStorage.setItem('cartItems', JSON.stringify(existingCart));
     
     toast({
       title: "Added to Cart",
