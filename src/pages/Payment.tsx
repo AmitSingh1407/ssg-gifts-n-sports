@@ -94,7 +94,7 @@ const PaymentPage = () => {
   }, [isTimerActive, timeLeft, navigate]);
 
   // Handle quantity change for specific item
-  const handleQuantityChange = (itemId: string, newQuantity: number) => {
+  const handleQuantityChange = (itemId: number, newQuantity: number) => {
     if (newQuantity >= 1) {
       const updatedItems = cartItems.map(item => 
         item.id === itemId ? { ...item, quantity: newQuantity } : item
@@ -105,7 +105,7 @@ const PaymentPage = () => {
   };
 
   // Remove item from cart
-  const handleRemoveItem = (itemId: string) => {
+  const handleRemoveItem = (itemId: number) => {
     const updatedItems = cartItems.filter(item => item.id !== itemId);
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
