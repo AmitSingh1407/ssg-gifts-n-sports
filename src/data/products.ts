@@ -89,7 +89,7 @@ export const products: Product[] = [
     id: 13,
     name: 'Electric Scented Candle',
     price: 599,
-    image: '/lovable-uploads/4ca78553-8b33-44e6-b15e-cf0feabc11f1.png',
+    image: '/lovable-uploads/78a80537-c79a-44b2-a3ac-c93ed971fb95.png',
     category: 'Gift Items',
   },
   {
