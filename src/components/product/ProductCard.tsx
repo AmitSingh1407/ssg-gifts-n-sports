@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Product } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +13,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const handleViewDetails = () => {
     toast({
@@ -21,35 +23,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleAddToCart = () => {
-    // Get existing cart items or initialize empty array
-    const existingCart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    
-    // Check if product already exists in cart
-    const existingItemIndex = existingCart.findIndex((item: any) => item.id === product.id);
-    
-    if (existingItemIndex >= 0) {
-      // If product exists, increment quantity
-      existingCart[existingItemIndex].quantity += 1;
-    } else {
-      // If new product, add with quantity 1
-      existingCart.push({
-        ...product,
-        quantity: 1
-      });
-    }
-    
-    // Store updated cart
-    localStorage.setItem('cartItems', JSON.stringify(existingCart));
-    
+    addToCart(product);
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart`,
     });
-    
-    // Navigate to payment page after a short delay
-    setTimeout(() => {
-      navigate('/payment');
-    }, 1000);
   };
 
   return (

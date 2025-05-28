@@ -1,12 +1,13 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Menu, X, Truck } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { useCart } from "@/contexts/CartContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { getTotalItems } = useCart();
 
   const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false);
@@ -26,6 +27,11 @@ const Header = () => {
   const goToDelivery = () => {
     setIsMenuOpen(false);
     navigate('/delivery');
+  };
+
+  const goToCart = () => {
+    setIsMenuOpen(false);
+    navigate('/cart');
   };
 
   return (
@@ -117,10 +123,15 @@ const Header = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="text-foreground hover:text-shop-purple"
-            onClick={() => goToDelivery()}
+            className="text-foreground hover:text-shop-purple relative"
+            onClick={() => goToCart()}
           >
             <ShoppingCart className="h-5 w-5" />
+            {getTotalItems() > 0 && (
+              <span className="absolute -top-1 -right-1 bg-shop-purple text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {getTotalItems()}
+              </span>
+            )}
           </Button>
           <Button 
             className="hidden md:flex bg-shop-purple hover:bg-shop-dark-purple"
@@ -211,6 +222,17 @@ const Header = () => {
             >
               <Truck className="h-4 w-4" />
               Delivery
+            </a>
+            <a 
+              href="/cart" 
+              className="py-2 text-foreground hover:text-shop-purple transition-colors flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                goToCart();
+              }}
+            >
+              <ShoppingCart className="h-4 w-4" />
+              Cart ({getTotalItems()})
             </a>
             <Button 
               className="w-full bg-shop-purple hover:bg-shop-dark-purple mt-2"
