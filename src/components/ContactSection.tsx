@@ -24,16 +24,19 @@ const ContactSection = () => {
             
             <div className="bg-gray-50 p-6 rounded-xl mb-6">
               <h3 className="font-semibold mb-4 text-lg">Store Location</h3>
-              <p className="text-gray-700 mb-2">123 Main Street</p>
-              <p className="text-gray-700 mb-2">Bangalore, Karnataka 560001</p>
+              <p className="text-gray-700 mb-2">3/1237 Bhawani Bazar</p>
+              <p className="text-gray-700 mb-2">Ganpati Misthan Bhandar</p>
+              <p className="text-gray-700 mb-2">Lucknow - 226031</p>
               <p className="text-gray-700 mb-2">India</p>
             </div>
             
             <div className="bg-gray-50 p-6 rounded-xl">
               <h3 className="font-semibold mb-4 text-lg">Contact Information</h3>
-              <p className="text-gray-700 mb-2">Phone: +91 98765 43210</p>
+              <p className="text-gray-700 mb-2">
+                Phone: <a href="tel:9721482831" className="text-shop-purple hover:text-shop-dark-purple underline">9721482831</a>
+              </p>
               <p className="text-gray-700 mb-2">Email: info@ssggiftsandsports.com</p>
-              <p className="text-gray-700">Hours: 9:00 AM - 8:00 PM, Mon - Sat</p>
+              <p className="text-gray-700">Open time: 9:00 to 9:00</p>
             </div>
           </div>
           
