@@ -35,7 +35,6 @@ const ContactSection = () => {
               <p className="text-gray-700 mb-2">
                 Phone: <a href="tel:9721482831" className="text-shop-purple hover:text-shop-dark-purple underline">9721482831</a>
               </p>
-              <p className="text-gray-700 mb-2">Email: info@ssggiftsandsports.com</p>
               <p className="text-gray-700">Open time: 9:00 to 9:00</p>
             </div>
           </div>
@@ -49,13 +48,6 @@ const ContactSection = () => {
                     Name
                   </label>
                   <Input id="name" placeholder="Your name" />
-                </div>
-                
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <Input id="email" type="email" placeholder="your@email.com" />
                 </div>
                 
                 <div>
