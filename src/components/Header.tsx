@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Menu, X, Truck } from "lucide-react";
+import { ShoppingCart, Menu, X, Truck, User, UserCog } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useCart } from "@/contexts/CartContext";
 
@@ -32,6 +32,16 @@ const Header = () => {
   const goToCart = () => {
     setIsMenuOpen(false);
     navigate('/cart');
+  };
+
+  const goToCustomerLogin = () => {
+    setIsMenuOpen(false);
+    navigate('/customer/login');
+  };
+
+  const goToAdminLogin = () => {
+    setIsMenuOpen(false);
+    navigate('/admin/login');
   };
 
   return (
@@ -234,6 +244,26 @@ const Header = () => {
               <ShoppingCart className="h-4 w-4" />
               Cart ({getTotalItems()})
             </a>
+            <div className="border-t pt-4 mt-2">
+              <div className="flex flex-col gap-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={goToCustomerLogin}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Customer Login
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={goToAdminLogin}
+                >
+                  <UserCog className="h-4 w-4 mr-2" />
+                  Admin Login
+                </Button>
+              </div>
+            </div>
             <Button 
               className="w-full bg-shop-purple hover:bg-shop-dark-purple mt-2"
               onClick={handleShopNow}
