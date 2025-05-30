@@ -127,6 +127,16 @@ const Header = () => {
           >
             Delivery
           </a>
+          <a 
+            href="/admin/login" 
+            className="text-foreground hover:text-shop-purple transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              goToAdminLogin();
+            }}
+          >
+            Admin
+          </a>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -243,6 +253,16 @@ const Header = () => {
             >
               <ShoppingCart className="h-4 w-4" />
               Cart ({getTotalItems()})
+            </a>
+            <a 
+              href="/admin/login" 
+              className="py-2 text-foreground hover:text-shop-purple transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                goToAdminLogin();
+              }}
+            >
+              Admin
             </a>
             <div className="border-t pt-4 mt-2">
               <div className="flex flex-col gap-2">
